@@ -128,6 +128,16 @@ export class Temperature {
 
       return this.normalizeResponse(response.data);
     } catch (err) {
+      if (
+        err.response &&
+        (err.response.status === 429 || err.response.status === 400)
+      ) {
+        throw new TemperatureResponseError(
+          `Error: ${JSON.stringify(err.response.data)} Code: ${
+            err.response.status
+          }`
+        );
+      }
       throw new ClienteRequestError(err.message);
     }
   }

@@ -107,5 +107,53 @@ describe("Temperature client", () => {
         "Unexpected error when trying to communicate to Temperature client: Network Error"
       );
     });
+
+    it("should get a TemperatureResponseError when the Temperature service responds with status code 429 (rate limit)", async () => {
+      const coords = {
+        lat: -15.78,
+        lon: -47.93,
+      };
+
+      mockedAxios.get.mockRejectedValue({
+        response: {
+          status: 429,
+          data: {
+            errors: ["Rate limit reached"],
+          },
+        },
+      });
+
+      const temperature = new Temperature(mockedAxios);
+
+      await expect(
+        temperature.fetchTemperatureByCoords(coords.lat, coords.lon)
+      ).rejects.toThrow(
+        'Unexpected error returned by the Temperature service: Error: {"errors":["Rate limit reached"]} Code: 429'
+      );
+    });
+
+    it("should get a TemperatureResponseError when the Temperature service responds with status code 400 (wrong latitude or longitude)", async () => {
+      const coords = {
+        lat: -14875.78,
+        lon: -47.93,
+      };
+
+      mockedAxios.get.mockRejectedValue({
+        response: {
+          status: 400,
+          data: {
+            errors: ["Wrong latitude or longitude"],
+          },
+        },
+      });
+
+      const temperature = new Temperature(mockedAxios);
+
+      await expect(
+        temperature.fetchTemperatureByCoords(coords.lat, coords.lon)
+      ).rejects.toThrow(
+        'Unexpected error returned by the Temperature service: Error: {"errors":["Wrong latitude or longitude"]} Code: 400'
+      );
+    });
   });
 });
