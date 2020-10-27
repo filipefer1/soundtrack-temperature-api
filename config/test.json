@@ -1,0 +1,9 @@
+{
+  "App": {
+    "resources": {
+      "Temperature": {
+        "apiToken": "test-token"
+      }
+    }
+  }
+}
