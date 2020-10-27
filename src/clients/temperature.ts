@@ -1,6 +1,6 @@
-import { InternalError } from "@src/util/errors/internal-error";
-import { AxiosStatic } from "axios";
 import config, { IConfig } from "config";
+import { InternalError } from "@src/util/errors/internal-error";
+import * as HTTP from "@src/util/request";
 
 const temperatureResourceConfig: IConfig = config.get(
   "App.resources.Temperature"
@@ -66,7 +66,7 @@ export interface TemperatureResponseNormalized {
   name: string;
 }
 
-export class ClienteRequestError extends InternalError {
+export class ClientRequestError extends InternalError {
   constructor(message: string) {
     const internalMessage =
       "Unexpected error when trying to communicate to Temperature client";
@@ -85,7 +85,7 @@ export class TemperatureResponseError extends InternalError {
 export class Temperature {
   readonly temperatureUnit = "metric";
 
-  constructor(protected request: AxiosStatic) {}
+  constructor(protected request = new HTTP.Request()) {}
 
   public async fetchTemperatureByCityName(
     cityName: string
@@ -99,17 +99,14 @@ export class Temperature {
 
       return this.normalizeResponse(response.data);
     } catch (err) {
-      if (
-        err.response &&
-        (err.response.status === 429 || err.response.status === 404)
-      ) {
+      if (HTTP.Request.isRequestError(err)) {
         throw new TemperatureResponseError(
           `Error: ${JSON.stringify(err.response.data)} Code: ${
             err.response.status
           }`
         );
       }
-      throw new ClienteRequestError(err.message);
+      throw new ClientRequestError(err.message);
     }
   }
 
@@ -128,17 +125,14 @@ export class Temperature {
 
       return this.normalizeResponse(response.data);
     } catch (err) {
-      if (
-        err.response &&
-        (err.response.status === 429 || err.response.status === 400)
-      ) {
+      if (HTTP.Request.isRequestError(err)) {
         throw new TemperatureResponseError(
           `Error: ${JSON.stringify(err.response.data)} Code: ${
             err.response.status
           }`
         );
       }
-      throw new ClienteRequestError(err.message);
+      throw new ClientRequestError(err.message);
     }
   }
 

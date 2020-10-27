@@ -2,28 +2,33 @@ import axios from "axios";
 import { Temperature } from "@src/clients/temperature";
 import temperatureResponseFixture from "./fixture/temperatureResponseFixture.json";
 import temperatureResponseNormalizedFixture from "./fixture/temperatureResponseNormalizedFixture.json";
+import * as HTTP from "@src/util/request";
 
-jest.mock("axios");
+jest.mock("@src/util/request");
 
 describe("Temperature client", () => {
-  const mockedAxios = axios as jest.Mocked<typeof axios>;
+  const mockedRequest = new HTTP.Request() as jest.Mocked<HTTP.Request>;
+  const MockedRequestClass = HTTP.Request as jest.Mocked<typeof HTTP.Request>;
 
   describe("When fetch temperature by city name", () => {
     it("should return normalized data from temperature service ", async () => {
       const cityname = "Brasília";
 
-      mockedAxios.get.mockResolvedValue({ data: temperatureResponseFixture });
+      mockedRequest.get.mockResolvedValue({
+        data: temperatureResponseFixture,
+      } as HTTP.Response);
 
-      const temperature = new Temperature(mockedAxios);
+      const temperature = new Temperature(mockedRequest);
       const response = await temperature.fetchTemperatureByCityName(cityname);
       expect(response).toEqual(temperatureResponseNormalizedFixture);
     });
 
     it("should get a generic error from Temperature service when the request fail before reaching the service", async () => {
       const cityname = "Brasília";
-      mockedAxios.get.mockRejectedValue({ message: "Network Error" });
 
-      const temperature = new Temperature(mockedAxios);
+      mockedRequest.get.mockRejectedValue({ message: "Network Error" });
+
+      const temperature = new Temperature(mockedRequest);
 
       await expect(
         temperature.fetchTemperatureByCityName(cityname)
@@ -35,7 +40,8 @@ describe("Temperature client", () => {
     it("should get a TemperatureResponseError when the Temperature service responds with status code 429 (rate limit)", async () => {
       const cityname = "Brasília";
 
-      mockedAxios.get.mockRejectedValue({
+      MockedRequestClass.isRequestError.mockReturnValue(true);
+      mockedRequest.get.mockRejectedValue({
         response: {
           status: 429,
           data: {
@@ -44,7 +50,7 @@ describe("Temperature client", () => {
         },
       });
 
-      const temperature = new Temperature(mockedAxios);
+      const temperature = new Temperature(mockedRequest);
 
       await expect(
         temperature.fetchTemperatureByCityName(cityname)
@@ -56,7 +62,8 @@ describe("Temperature client", () => {
     it("should get a TemperatureResponseError when the Temperature service responds with status code 404 (city not found)", async () => {
       const cityname = "invalid_city_name";
 
-      mockedAxios.get.mockRejectedValue({
+      MockedRequestClass.isRequestError.mockReturnValue(true);
+      mockedRequest.get.mockRejectedValue({
         response: {
           status: 404,
           data: {
@@ -65,7 +72,7 @@ describe("Temperature client", () => {
         },
       });
 
-      const temperature = new Temperature(mockedAxios);
+      const temperature = new Temperature(mockedRequest);
 
       await expect(
         temperature.fetchTemperatureByCityName(cityname)
@@ -81,9 +88,11 @@ describe("Temperature client", () => {
         lon: -47.93,
       };
 
-      mockedAxios.get.mockResolvedValue({ data: temperatureResponseFixture });
+      mockedRequest.get.mockResolvedValue({
+        data: temperatureResponseFixture,
+      } as HTTP.Response);
 
-      const temperature = new Temperature(mockedAxios);
+      const temperature = new Temperature(mockedRequest);
       const response = await temperature.fetchTemperatureByCoords(
         coords.lat,
         coords.lon
@@ -97,9 +106,10 @@ describe("Temperature client", () => {
         lon: -47.93,
       };
 
-      mockedAxios.get.mockRejectedValue({ message: "Network Error" });
+      MockedRequestClass.isRequestError.mockReturnValue(false);
+      mockedRequest.get.mockRejectedValue({ message: "Network Error" });
 
-      const temperature = new Temperature(mockedAxios);
+      const temperature = new Temperature(mockedRequest);
 
       await expect(
         temperature.fetchTemperatureByCoords(coords.lat, coords.lon)
@@ -114,7 +124,8 @@ describe("Temperature client", () => {
         lon: -47.93,
       };
 
-      mockedAxios.get.mockRejectedValue({
+      MockedRequestClass.isRequestError.mockReturnValue(true);
+      mockedRequest.get.mockRejectedValue({
         response: {
           status: 429,
           data: {
@@ -123,7 +134,7 @@ describe("Temperature client", () => {
         },
       });
 
-      const temperature = new Temperature(mockedAxios);
+      const temperature = new Temperature(mockedRequest);
 
       await expect(
         temperature.fetchTemperatureByCoords(coords.lat, coords.lon)
@@ -138,7 +149,8 @@ describe("Temperature client", () => {
         lon: -47.93,
       };
 
-      mockedAxios.get.mockRejectedValue({
+      MockedRequestClass.isRequestError.mockReturnValue(true);
+      mockedRequest.get.mockRejectedValue({
         response: {
           status: 400,
           data: {
@@ -147,7 +159,7 @@ describe("Temperature client", () => {
         },
       });
 
-      const temperature = new Temperature(mockedAxios);
+      const temperature = new Temperature(mockedRequest);
 
       await expect(
         temperature.fetchTemperatureByCoords(coords.lat, coords.lon)
