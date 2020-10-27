@@ -1,10 +1,27 @@
 import { TemperatureService } from "@src/services/temperature";
 import { Request, Response } from "express";
 
-class SoundtrackTemperature {
-  constructor(private temperatureService = new TemperatureService()) {}
+const temperatureService = new TemperatureService();
 
+class SoundtrackTemperature {
   public async create(req: Request, res: Response): Promise<void> {
+    const { cityName, coords } = req.body;
+
+    if (!cityName && !coords) {
+      // tratar esse erro
+      throw new Error("coords city name");
+    }
+
+    const cityNameOrCoords = {
+      cityName: cityName && cityName,
+      coords: coords && coords,
+    };
+
+    const temperature = await temperatureService.fetchTemperature(
+      cityNameOrCoords
+    );
+
+    console.log(temperature);
     res.send({
       cityName: "Brasília",
       coord: {
