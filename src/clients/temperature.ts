@@ -74,6 +74,14 @@ export class ClienteRequestError extends InternalError {
   }
 }
 
+export class TemperatureResponseError extends InternalError {
+  constructor(message: string) {
+    const internalMessage =
+      "Unexpected error returned by the Temperature service";
+    super(`${internalMessage}: ${message}`);
+  }
+}
+
 export class Temperature {
   readonly temperatureUnit = "metric";
 
@@ -91,6 +99,13 @@ export class Temperature {
 
       return this.normalizeResponse(response.data);
     } catch (err) {
+      if (err.response && err.response.status === 429) {
+        throw new TemperatureResponseError(
+          `Error: ${JSON.stringify(err.response.data)} Code: ${
+            err.response.status
+          }`
+        );
+      }
       throw new ClienteRequestError(err.message);
     }
   }
