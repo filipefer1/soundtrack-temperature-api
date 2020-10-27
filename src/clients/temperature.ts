@@ -1,3 +1,4 @@
+import { InternalError } from "@src/util/errors/internal-error";
 import { AxiosStatic } from "axios";
 import config, { IConfig } from "config";
 
@@ -65,6 +66,14 @@ export interface TemperatureResponseNormalized {
   name: string;
 }
 
+export class ClienteRequestError extends InternalError {
+  constructor(message: string) {
+    const internalMessage =
+      "Unexpected error when trying to communicate to Temperature client";
+    super(`${internalMessage}: ${message}`);
+  }
+}
+
 export class Temperature {
   readonly temperatureUnit = "metric";
 
@@ -73,13 +82,17 @@ export class Temperature {
   public async fetchTemperatureByCityName(
     cityName: string
   ): Promise<TemperatureResponseNormalized> {
-    const response = await this.request.get<TemperatureResponse>(
-      `${temperatureResourceConfig.get("apiUrl")}?q=${cityName}&units=${
-        this.temperatureUnit
-      }&appid=${temperatureResourceConfig.get("apiToken")}`
-    );
+    try {
+      const response = await this.request.get<TemperatureResponse>(
+        `${temperatureResourceConfig.get("apiUrl")}?q=${cityName}&units=${
+          this.temperatureUnit
+        }&appid=${temperatureResourceConfig.get("apiToken")}`
+      );
 
-    return this.normalizeResponse(response.data);
+      return this.normalizeResponse(response.data);
+    } catch (err) {
+      throw new ClienteRequestError(err.message);
+    }
   }
 
   private normalizeResponse(

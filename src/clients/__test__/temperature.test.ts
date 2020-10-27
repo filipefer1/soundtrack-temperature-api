@@ -6,15 +6,30 @@ import temperatureResponseNormalizedFixture from "./fixture/temperatureResponseN
 jest.mock("axios");
 
 describe("Temperature client", () => {
-  it("should return normalized data from temperature service by city name ", async () => {
-    const cityname = "Brasília";
+  const mockedAxios = axios as jest.Mocked<typeof axios>;
 
-    axios.get = jest
-      .fn()
-      .mockResolvedValue({ data: temperatureResponseFixture });
+  describe("When fetch temperature by city name", () => {
+    it("should return normalized data from temperature service ", async () => {
+      const cityname = "Brasília";
 
-    const temperature = new Temperature(axios);
-    const response = await temperature.fetchTemperatureByCityName(cityname);
-    expect(response).toEqual(temperatureResponseNormalizedFixture);
+      mockedAxios.get.mockResolvedValue({ data: temperatureResponseFixture });
+
+      const temperature = new Temperature(mockedAxios);
+      const response = await temperature.fetchTemperatureByCityName(cityname);
+      expect(response).toEqual(temperatureResponseNormalizedFixture);
+    });
+
+    it("should get a generic error from Temperature service when the request fail before reaching the service", async () => {
+      const cityname = "Brasília";
+      mockedAxios.get.mockRejectedValue({ message: "Network Error" });
+
+      const temperature = new Temperature(mockedAxios);
+
+      await expect(
+        temperature.fetchTemperatureByCityName(cityname)
+      ).rejects.toThrow(
+        "Unexpected error when trying to communicate to Temperature client: Network Error"
+      );
+    });
   });
 });
