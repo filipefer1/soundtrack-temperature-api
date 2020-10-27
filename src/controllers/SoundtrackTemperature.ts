@@ -1,7 +1,10 @@
+import { TemperatureService } from "@src/services/temperature";
 import { Request, Response } from "express";
 
 class SoundtrackTemperature {
-  public async create(_: Request, res: Response): Promise<void> {
+  constructor(private temperatureService = new TemperatureService()) {}
+
+  public async create(req: Request, res: Response): Promise<void> {
     res.send({
       cityName: "Brasília",
       coord: {

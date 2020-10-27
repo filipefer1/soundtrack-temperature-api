@@ -1,7 +1,7 @@
 import axios from "axios";
 import { Temperature } from "@src/clients/temperature";
-import temperatureResponseFixture from "./fixture/temperatureResponseFixture.json";
-import temperatureResponseNormalizedFixture from "./fixture/temperatureResponseNormalizedFixture.json";
+import temperatureResponseFixture from "@test/fixture/temperatureResponseFixture.json";
+import temperatureResponseNormalizedFixture from "@test/fixture/temperatureResponseNormalizedFixture.json";
 import * as HTTP from "@src/util/request";
 
 jest.mock("@src/util/request");
