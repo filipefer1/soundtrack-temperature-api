@@ -113,6 +113,25 @@ export class Temperature {
     }
   }
 
+  public async fetchTemperatureByCoords(
+    lat: number,
+    lon: number
+  ): Promise<TemperatureResponseNormalized> {
+    try {
+      const response = await this.request.get<TemperatureResponse>(
+        `${temperatureResourceConfig.get(
+          "apiUrl"
+        )}?lat=${lat}&lon=${lon}&units=${
+          this.temperatureUnit
+        }&appid=${temperatureResourceConfig.get("apiToken")}`
+      );
+
+      return this.normalizeResponse(response.data);
+    } catch (err) {
+      throw new ClienteRequestError(err.message);
+    }
+  }
+
   private normalizeResponse(
     temperature: TemperatureResponse
   ): TemperatureResponseNormalized {

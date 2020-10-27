@@ -90,5 +90,22 @@ describe("Temperature client", () => {
       );
       expect(response).toEqual(temperatureResponseNormalizedFixture);
     });
+
+    it("should get a generic error from Temperature service when the request fail before reaching the service", async () => {
+      const coords = {
+        lat: -15.78,
+        lon: -47.93,
+      };
+
+      mockedAxios.get.mockRejectedValue({ message: "Network Error" });
+
+      const temperature = new Temperature(mockedAxios);
+
+      await expect(
+        temperature.fetchTemperatureByCoords(coords.lat, coords.lon)
+      ).rejects.toThrow(
+        "Unexpected error when trying to communicate to Temperature client: Network Error"
+      );
+    });
   });
 });
