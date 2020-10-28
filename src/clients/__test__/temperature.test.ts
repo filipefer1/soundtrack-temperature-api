@@ -1,4 +1,3 @@
-import axios from "axios";
 import { Temperature } from "@src/clients/temperature";
 import temperatureResponseFixture from "@test/fixture/temperatureResponseFixture.json";
 import temperatureResponseNormalizedFixture from "@test/fixture/temperatureResponseNormalizedFixture.json";
