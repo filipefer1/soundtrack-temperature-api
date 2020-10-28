@@ -123,6 +123,7 @@ export class Sound {
     const randomNumber = GenerateRandomNumber.getRandomNumber();
     const itemList = soundResponse.tracks.items[randomNumber];
     const artists: string[] = [];
+
     for (let artist of itemList.artists) {
       artists.push(artist.name);
     }
