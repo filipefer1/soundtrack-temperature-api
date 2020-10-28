@@ -1,6 +1,7 @@
 import config, { IConfig } from "config";
 import { InternalError } from "@src/util/errors/internal-error";
 import * as HTTP from "@src/util/request";
+import { ClientRequestError } from "@src/util/errors/clientRequestError";
 
 const temperatureResourceConfig: IConfig = config.get(
   "App.resources.Temperature"
@@ -64,14 +65,6 @@ export interface TemperatureResponseNormalized {
   coord: Coord;
   temp: number;
   name: string;
-}
-
-export class ClientRequestError extends InternalError {
-  constructor(message: string) {
-    const internalMessage =
-      "Unexpected error when trying to communicate to Temperature client";
-    super(`${internalMessage}: ${message}`);
-  }
 }
 
 export class TemperatureResponseError extends InternalError {

@@ -88,13 +88,17 @@ export class Sound {
   public async processMusicGenreSearch(
     genre: string
   ): Promise<SoundResponseNormalized> {
-    const response = await this.request.get<SoundResponse>(
-      `${soundResourceConfig.get("apiUrl")}?q=genre:${genre}$type=${
-        this.type
-      }$limit=${this.limit}&offset=${50}`
-    );
+    try {
+      const response = await this.request.get<SoundResponse>(
+        `${soundResourceConfig.get("apiUrl")}?q=genre:${genre}$type=${
+          this.type
+        }$limit=${this.limit}&offset=${50}`
+      );
 
-    return this.normalizedResponse(response.data);
+      return this.normalizedResponse(response.data);
+    } catch (err) {
+      throw new Error("");
+    }
   }
 
   private normalizedResponse(

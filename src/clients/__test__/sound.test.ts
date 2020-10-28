@@ -27,5 +27,15 @@ describe("Sound client", () => {
       const soundResponse = await sound.processMusicGenreSearch(genre);
       expect(soundResponse).toEqual(soundResponseNormalizedFixture);
     });
+
+    it("should throw an error if sound service fail before reaching the service", async () => {
+      const genre = "Rock";
+
+      mockedRequest.get.mockRejectedValue({ message: "Network Error" });
+      const sound = new Sound(mockedRequest);
+      await expect(sound.processMusicGenreSearch(genre)).rejects.toThrow(
+        "Unexpected error when trying to communicate to Temperature client: Network Error"
+      );
+    });
   });
 });
