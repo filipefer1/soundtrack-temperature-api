@@ -1,3 +1,5 @@
+import { Sound, SoundResponseNormalized } from "@src/clients/sound";
+
 export class SoundService {
   readonly genre = {
     pop: "pop",
@@ -5,6 +7,16 @@ export class SoundService {
     rock: "rock",
     classical: "classical",
   };
+
+  constructor(protected sound = new Sound()) {}
+
+  public async fetchSoundTrack(
+    temperature: number
+  ): Promise<SoundResponseNormalized> {
+    const genre = this.calculateMusicGenre(temperature);
+    const soundtrack = await this.sound.processMusicGenreSearch(genre);
+    return soundtrack;
+  }
 
   public calculateMusicGenre(temperature: number): string {
     if (temperature < 10) {
