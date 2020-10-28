@@ -1,6 +1,8 @@
 import config, { IConfig } from "config";
 import * as HTTP from "@src/util/request";
 import GenerateRandomNumber from "@src/util/getRandomNumber";
+import { ClientRequestError } from "@src/util/errors/clientRequestError";
+import { InternalError } from "@src/util/errors/internal-error";
 
 const soundResourceConfig: IConfig = config.get("App.resources.Sound");
 
@@ -79,6 +81,13 @@ export interface SoundResponseNormalized {
   soundtrack: string;
 }
 
+export class SoundResponseError extends InternalError {
+  constructor(message: string) {
+    const internalMessage = "Unexpected error returned by the Sound service";
+    super(`${internalMessage}: ${message}`);
+  }
+}
+
 export class Sound {
   readonly type = "track";
   readonly limit = 25;
@@ -97,7 +106,14 @@ export class Sound {
 
       return this.normalizedResponse(response.data);
     } catch (err) {
-      throw new Error("");
+      if (HTTP.Request.isRequestError(err)) {
+        throw new SoundResponseError(
+          `Error: ${JSON.stringify(err.response.data)} Code: ${
+            err.response.status
+          }`
+        );
+      }
+      throw new ClientRequestError(err.message);
     }
   }
 
