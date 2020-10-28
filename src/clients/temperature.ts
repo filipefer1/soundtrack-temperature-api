@@ -91,7 +91,6 @@ export class Temperature {
     cityName: string
   ): Promise<TemperatureResponseNormalized> {
     try {
-      console.log(cityName);
       const response = await this.request.get<TemperatureResponse>(
         `${temperatureResourceConfig.get("apiUrl")}?q=${cityName}&units=${
           this.temperatureUnit
