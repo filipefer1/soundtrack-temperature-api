@@ -3,6 +3,7 @@ import {
   Temperature,
   TemperatureResponseNormalized,
 } from "@src/clients/temperature";
+import { removeAccents } from "@src/util/formatCityName";
 import { formatCoord } from "@src/util/formatCoords";
 
 export interface cityNameOrCoords {
@@ -23,6 +24,7 @@ export class TemperatureService {
       coords.lon = formatCoord(coords.lon);
       return this.temperature.fetchTemperatureByCoords(coords.lat, coords.lon);
     }
-    return this.temperature.fetchTemperatureByCityName(cityName as string);
+    const normalizedCityName = removeAccents(cityName!);
+    return this.temperature.fetchTemperatureByCityName(normalizedCityName);
   }
 }
