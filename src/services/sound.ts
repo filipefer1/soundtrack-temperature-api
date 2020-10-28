@@ -1,5 +1,9 @@
 import { Sound, SoundResponseNormalized } from "@src/clients/sound";
 
+export interface SoundtrackResponse extends SoundResponseNormalized {
+  genre: string;
+}
+
 export class SoundService {
   readonly genre = {
     pop: "pop",
@@ -12,10 +16,10 @@ export class SoundService {
 
   public async fetchSoundTrack(
     temperature: number
-  ): Promise<SoundResponseNormalized> {
+  ): Promise<SoundtrackResponse> {
     const genre = this.calculateMusicGenre(temperature);
     const soundtrack = await this.sound.processMusicGenreSearch(genre);
-    return soundtrack;
+    return { ...soundtrack, genre };
   }
 
   public calculateMusicGenre(temperature: number): string {

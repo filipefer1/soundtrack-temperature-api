@@ -16,7 +16,8 @@ describe("Sound service", () => {
       const soundService = new SoundService(mockedSoundClient);
       const soundtrack = await soundService.fetchSoundTrack(temperature);
 
-      expect(soundtrack).toEqual(soundResponseNormalized);
+      expect(soundtrack).toMatchObject(soundResponseNormalized);
+      expect(soundtrack.genre).toBeDefined();
       expect(mockedSoundClient.processMusicGenreSearch).toHaveBeenCalledTimes(
         1
       );

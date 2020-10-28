@@ -35,7 +35,7 @@ describe("Sound client", () => {
       mockedRequest.get.mockRejectedValue({ message: "Network Error" });
       const sound = new Sound(mockedRequest);
       await expect(sound.processMusicGenreSearch(genre)).rejects.toThrow(
-        "Unexpected error when trying to communicate to Temperature client: Network Error"
+        "Unexpected error when trying to communicate to external client: Network Error"
       );
     });
 

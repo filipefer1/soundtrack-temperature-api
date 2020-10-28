@@ -99,9 +99,14 @@ export class Sound {
   ): Promise<SoundResponseNormalized> {
     try {
       const response = await this.request.get<SoundResponse>(
-        `${soundResourceConfig.get("apiUrl")}?q=genre:${genre}$type=${
-          this.type
-        }$limit=${this.limit}&offset=${50}`
+        `${soundResourceConfig.get(
+          "apiUrl"
+        )}?q=genre:${genre}&type=track&limit=${this.limit}&offset=${50}`,
+        {
+          headers: {
+            Authorization: `Bearer ${soundResourceConfig.get("apiToken")}`,
+          },
+        }
       );
 
       return this.normalizedResponse(response.data);

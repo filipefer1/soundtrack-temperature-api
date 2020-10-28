@@ -32,7 +32,7 @@ describe("Temperature client", () => {
       await expect(
         temperature.fetchTemperatureByCityName(cityname)
       ).rejects.toThrow(
-        "Unexpected error when trying to communicate to Temperature client: Network Error"
+        "Unexpected error when trying to communicate to external client: Network Error"
       );
     });
 
@@ -113,7 +113,7 @@ describe("Temperature client", () => {
       await expect(
         temperature.fetchTemperatureByCoords(coords.lat, coords.lon)
       ).rejects.toThrow(
-        "Unexpected error when trying to communicate to Temperature client: Network Error"
+        "Unexpected error when trying to communicate to external client: Network Error"
       );
     });
 

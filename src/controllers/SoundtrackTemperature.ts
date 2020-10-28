@@ -1,7 +1,9 @@
 import { TemperatureService } from "@src/services/temperature";
+import { SoundService } from "@src/services/sound";
 import { Request, Response } from "express";
 
 const temperatureService = new TemperatureService();
+const soundService = new SoundService();
 
 class SoundtrackTemperature {
   public async create(req: Request, res: Response): Promise<void> {
@@ -17,11 +19,16 @@ class SoundtrackTemperature {
       coords: coords && coords,
     };
 
-    const temperature = await temperatureService.fetchTemperature(
+    const temperatureInfos = await temperatureService.fetchTemperature(
       cityNameOrCoords
     );
 
-    console.log(temperature);
+    console.log(temperatureInfos);
+
+    const soundtrack = await soundService.fetchSoundTrack(
+      temperatureInfos.temp
+    );
+    console.log(soundtrack);
     res.send({
       cityName: "Brasília",
       coord: {
