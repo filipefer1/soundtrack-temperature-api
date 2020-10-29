@@ -1,0 +1,10 @@
+{
+  "App": {
+    "resources": {
+      "Sound": {
+        "clientId": "CLIENTID",
+        "clientSecret": "CLIENTSECRET"
+      }
+    }
+  }
+}

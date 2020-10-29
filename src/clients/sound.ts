@@ -1,5 +1,7 @@
 import config, { IConfig } from "config";
+import { OAuth } from "@src/clients/oauth";
 import * as HTTP from "@src/util/request";
+import { GenerateOAuthToken } from "@src/util/generateToken";
 import GenerateRandomNumber from "@src/util/getRandomNumber";
 import { ClientRequestError } from "@src/util/errors/clientRequestError";
 import { InternalError } from "@src/util/errors/internal-error";
@@ -92,19 +94,33 @@ export class Sound {
   readonly type = "track";
   readonly limit = 25;
 
-  constructor(protected request = new HTTP.Request()) {}
+  constructor(
+    protected request = new HTTP.Request(),
+    protected oauthRequest = new OAuth()
+  ) {}
 
   public async processMusicGenreSearch(
     genre: string
   ): Promise<SoundResponseNormalized> {
     try {
+      const token = GenerateOAuthToken.generateToken(
+        soundResourceConfig.get("clientId"),
+        soundResourceConfig.get("clientSecret")
+      );
+
+      const oauthToken = await this.oauthRequest.getOAuthToken(token);
+
+      const min = 1;
+      const max = 2000;
+      const offtest = GenerateRandomNumber.getRandomNumber(min, max);
+
       const response = await this.request.get<SoundResponse>(
         `${soundResourceConfig.get(
           "apiUrl"
-        )}?q=genre:${genre}&type=track&limit=${this.limit}&offset=${50}`,
+        )}?q=genre:${genre}&type=track&limit=${this.limit}&offset=${offtest}`,
         {
           headers: {
-            Authorization: `Bearer ${soundResourceConfig.get("apiToken")}`,
+            Authorization: `Bearer ${oauthToken.access_token}`,
           },
         }
       );
@@ -118,6 +134,7 @@ export class Sound {
           }`
         );
       }
+      console.error(err.data);
       throw new ClientRequestError(err.message);
     }
   }
@@ -125,7 +142,9 @@ export class Sound {
   private normalizedResponse(
     soundResponse: SoundResponse
   ): SoundResponseNormalized {
-    const randomNumber = GenerateRandomNumber.getRandomNumber();
+    const min = 0;
+    const max = 25;
+    const randomNumber = GenerateRandomNumber.getRandomNumber(min, max);
     const itemList = soundResponse.tracks.items[randomNumber];
     const artists: string[] = [];
 
