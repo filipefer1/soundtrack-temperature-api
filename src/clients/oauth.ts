@@ -1,13 +1,8 @@
+import { OAuthResponse } from "@src/interfaces/oauth";
 import { ClientRequestError } from "@src/util/errors/clientRequestError";
 import * as HTTP from "@src/util/request";
 import axios, { AxiosStatic } from "axios";
 
-export interface OAuthResponse {
-  access_token: string;
-  token_type: string;
-  expires_in: number;
-  scope: string;
-}
 export class OAuth {
   constructor(protected request: AxiosStatic = axios) {}
 

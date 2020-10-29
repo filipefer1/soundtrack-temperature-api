@@ -4,7 +4,7 @@ import GenerateRandomNumber from "@src/util/getRandomNumber";
 import soundResponseFixture from "@test/fixture/soundResponseFixture.json";
 import soundResponseNormalizedFixture from "@test/fixture/soundResponseNormalized.json";
 import oauthResponseFixture from "@test/fixture/oauthResponseFixture.json";
-import { OAuth, OAuthResponse } from "@src/clients/oauth";
+import { OAuth } from "@src/clients/oauth";
 
 jest.mock("@src/util/request");
 jest.mock("@src/util/getRandomNumber");
