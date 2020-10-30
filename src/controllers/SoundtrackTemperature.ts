@@ -1,11 +1,12 @@
 import { TemperatureService } from "@src/services/temperature";
 import { SoundService } from "@src/services/sound";
 import { NextFunction, Request, Response } from "express";
+import { SoundtrackTemperature } from "@src/models/SoundtrackTemperature";
 
 const temperatureService = new TemperatureService();
 const soundService = new SoundService();
 
-class SoundtrackTemperature {
+class SoundtrackTemperatureController {
   public async create(
     req: Request,
     res: Response,
@@ -32,11 +33,18 @@ class SoundtrackTemperature {
         temperatureInfos.temp
       );
 
-      res.status(201).json({ soundtrack, temperature: temperatureInfos });
+      const soundtrackTemperature = new SoundtrackTemperature({
+        soundtrack,
+        temperature: temperatureInfos,
+      });
+
+      const result = await soundtrackTemperature.save();
+
+      res.status(201).json(result);
     } catch (err) {
       next(err);
     }
   }
 }
 
-export default new SoundtrackTemperature();
+export default new SoundtrackTemperatureController();

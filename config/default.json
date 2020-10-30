@@ -1,5 +1,8 @@
 {
   "App": {
+    "database": {
+      "mongoUrl": "mongodb://localhost:27017/soundtrack"
+    },
     "resources": {
       "Temperature": {
         "apiUrl": "https://api.openweathermap.org/data/2.5/weather",

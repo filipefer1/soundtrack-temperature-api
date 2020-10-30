@@ -67,6 +67,10 @@ export interface SoundResponse {
   };
 }
 
+export interface SoundtrackResponse extends SoundResponseNormalized {
+  genre: string;
+}
+
 export interface SoundResponseNormalized {
   artists: Array<string>;
   spotify_link: string;
