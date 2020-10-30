@@ -45,6 +45,21 @@ class SoundtrackTemperatureController {
       next(err);
     }
   }
+  public async index(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const soundtrackTemperatures = await SoundtrackTemperature.find();
+      if (!soundtrackTemperatures) {
+        throw new Error("Could not found all soundtracks");
+      }
+      res.status(200).json(soundtrackTemperatures);
+    } catch (err) {
+      next(err);
+    }
+  }
 }
 
 export default new SoundtrackTemperatureController();
