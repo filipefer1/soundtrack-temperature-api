@@ -1,4 +1,5 @@
-import { Sound, SoundResponseNormalized } from "@src/clients/sound";
+import { Sound } from "@src/clients/sound";
+import { SoundResponseNormalized } from "@src/interfaces/sound";
 
 export interface SoundtrackResponse extends SoundResponseNormalized {
   genre: string;
