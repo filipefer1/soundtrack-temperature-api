@@ -6,6 +6,7 @@ import GenerateRandomNumber from "@src/util/getRandomNumber";
 import { ClientRequestError } from "@src/util/errors/clientRequestError";
 import { InternalError } from "@src/util/errors/internal-error";
 import { SoundResponse, SoundResponseNormalized } from "@src/interfaces/sound";
+import { CLIENTID, CLIENTISECRET } from "@src/util/config";
 
 const soundResourceConfig: IConfig = config.get("App.resources.Sound");
 
@@ -29,10 +30,7 @@ export class Sound {
     genre: string
   ): Promise<SoundResponseNormalized> {
     try {
-      const token = GenerateOAuthToken.generateToken(
-        soundResourceConfig.get("clientId"),
-        soundResourceConfig.get("clientSecret")
-      );
+      const token = GenerateOAuthToken.generateToken(CLIENTID, CLIENTISECRET);
 
       const oauthToken = await this.oauthRequest.getOAuthToken(token);
 
