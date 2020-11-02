@@ -5,8 +5,6 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.Sound = exports.SoundResponseError = void 0;
 
-var _config = _interopRequireDefault(require("config"));
-
 var _oauth = require("./oauth");
 
 var HTTP = _interopRequireWildcard(require("../util/request"));
@@ -19,15 +17,13 @@ var _clientRequestError = require("../util/errors/clientRequestError");
 
 var _internalError = require("../util/errors/internal-error");
 
-var _config2 = require("../util/config");
+var _config = require("../config");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-const soundResourceConfig = _config.default.get("App.resources.Sound");
 
 class SoundResponseError extends _internalError.InternalError {
   constructor(message) {
@@ -50,7 +46,7 @@ class Sound {
 
   async processMusicGenreSearch(genre) {
     try {
-      const token = _generateToken.GenerateOAuthToken.generateToken(_config2.CLIENTID, _config2.CLIENTISECRET);
+      const token = _generateToken.GenerateOAuthToken.generateToken(_config.sound.CLIENTID, _config.sound.CLIENTSECRET);
 
       const oauthToken = await this.oauthRequest.getOAuthToken(token);
       const min = 1;
@@ -58,7 +54,7 @@ class Sound {
 
       const offtest = _getRandomNumber.default.getRandomNumber(min, max);
 
-      const response = await this.request.get(`${soundResourceConfig.get("apiUrl")}?q=genre:${genre}&type=track&limit=${this.limit}&offset=${offtest}`, {
+      const response = await this.request.get(`${_config.sound.APIURL}?q=genre:${genre}&type=track&limit=${this.limit}&offset=${offtest}`, {
         headers: {
           Authorization: `Bearer ${oauthToken.access_token}`
         }

@@ -7,14 +7,12 @@ exports.close = exports.connect = void 0;
 
 var _mongoose = _interopRequireDefault(require("mongoose"));
 
-var _config = _interopRequireDefault(require("config"));
+var _config = require("./config");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-const dbConfig = _config.default.get("App.database");
-
 const connect = async () => {
-  return await _mongoose.default.connect(dbConfig.get("mongoUrl"), {
+  return await _mongoose.default.connect(_config.db.URL, {
     useCreateIndex: true,
     useNewUrlParser: true,
     useUnifiedTopology: true

@@ -1,4 +1,3 @@
-import config, { IConfig } from "config";
 import { InternalError } from "@src/util/errors/internal-error";
 import * as HTTP from "@src/util/request";
 import { ClientRequestError } from "@src/util/errors/clientRequestError";
@@ -6,10 +5,7 @@ import {
   TemperatureResponse,
   TemperatureResponseNormalized,
 } from "@src/interfaces/temperature";
-
-const temperatureResourceConfig: IConfig = config.get(
-  "App.resources.Temperature"
-);
+import { temperature } from "@src/config";
 
 export class TemperatureResponseError extends InternalError {
   constructor(message: string) {
@@ -29,9 +25,7 @@ export class Temperature {
   ): Promise<TemperatureResponseNormalized> {
     try {
       const response = await this.request.get<TemperatureResponse>(
-        `${temperatureResourceConfig.get("apiUrl")}?q=${cityName}&units=${
-          this.temperatureUnit
-        }&appid=${temperatureResourceConfig.get("apiToken")}`
+        `${temperature.TEMPERATURE_API_URL}?q=${cityName}&units=${this.temperatureUnit}&appid=${temperature.TEMPERATURE_API_TOKEN}`
       );
 
       return this.normalizeResponse(response.data);
@@ -53,11 +47,7 @@ export class Temperature {
   ): Promise<TemperatureResponseNormalized> {
     try {
       const response = await this.request.get<TemperatureResponse>(
-        `${temperatureResourceConfig.get(
-          "apiUrl"
-        )}?lat=${lat}&lon=${lon}&units=${
-          this.temperatureUnit
-        }&appid=${temperatureResourceConfig.get("apiToken")}`
+        `${temperature.TEMPERATURE_API_URL}?lat=${lat}&lon=${lon}&units=${this.temperatureUnit}&appid=${temperature.TEMPERATURE_API_TOKEN}`
       );
 
       return this.normalizeResponse(response.data);

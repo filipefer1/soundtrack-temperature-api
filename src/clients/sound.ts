@@ -1,4 +1,3 @@
-import config, { IConfig } from "config";
 import { OAuth } from "@src/clients/oauth";
 import * as HTTP from "@src/util/request";
 import { GenerateOAuthToken } from "@src/util/generateToken";
@@ -6,9 +5,7 @@ import GenerateRandomNumber from "@src/util/getRandomNumber";
 import { ClientRequestError } from "@src/util/errors/clientRequestError";
 import { InternalError } from "@src/util/errors/internal-error";
 import { SoundResponse, SoundResponseNormalized } from "@src/interfaces/sound";
-import { CLIENTID, CLIENTISECRET } from "@src/util/config";
-
-const soundResourceConfig: IConfig = config.get("App.resources.Sound");
+import { sound } from "@src/config";
 
 export class SoundResponseError extends InternalError {
   constructor(message: string) {
@@ -30,7 +27,10 @@ export class Sound {
     genre: string
   ): Promise<SoundResponseNormalized> {
     try {
-      const token = GenerateOAuthToken.generateToken(CLIENTID, CLIENTISECRET);
+      const token = GenerateOAuthToken.generateToken(
+        sound.CLIENTID,
+        sound.CLIENTSECRET
+      );
 
       const oauthToken = await this.oauthRequest.getOAuthToken(token);
 
@@ -39,9 +39,7 @@ export class Sound {
       const offtest = GenerateRandomNumber.getRandomNumber(min, max);
 
       const response = await this.request.get<SoundResponse>(
-        `${soundResourceConfig.get(
-          "apiUrl"
-        )}?q=genre:${genre}&type=track&limit=${this.limit}&offset=${offtest}`,
+        `${sound.APIURL}?q=genre:${genre}&type=track&limit=${this.limit}&offset=${offtest}`,
         {
           headers: {
             Authorization: `Bearer ${oauthToken.access_token}`,

@@ -1,0 +1,18 @@
+version: "3"
+services:
+  api:
+    image: "filipefer1/soundtrack-temperature"
+    env_file: .env
+    depends_on:
+      - link-db
+    links:
+      - link-db
+    ports:
+      - "3333:3333"
+  link-db:
+    image: mongo
+    ports:
+      - "27017:27017"
+      - "28017:28017"
+    environment:
+      - AUTH=no

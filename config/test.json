@@ -1,9 +1,0 @@
-{
-  "App": {
-    "resources": {
-      "Temperature": {
-        "apiToken": "b77e07f479efe92156376a8b07640ced"
-      }
-    }
-  }
-}

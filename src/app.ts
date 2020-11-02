@@ -1,4 +1,9 @@
+import * as dotenv from "dotenv";
+dotenv.config();
 import { SetupServer } from "@src/server";
+import { db, temperature } from "@src/config";
+
+const pathEnv = `${__dirname}/../.env`;
 
 enum ExitStatus {
   Failure = 1,
